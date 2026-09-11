@@ -1,6 +1,8 @@
 package com.example.helloworldcompose
 
+import android.content.Context
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -12,6 +14,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.helloworldcompose.ui.theme.HelloWorldComposeTheme
 
@@ -22,7 +25,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             HelloWorldComposeTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    // Llamamos a la pantalla del Punto 1
                     RegistroLibroScreen(modifier = Modifier.padding(innerPadding))
                 }
             }
@@ -33,6 +35,9 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegistroLibroScreen(modifier: Modifier = Modifier) {
+    // Obtener contexto local para manejar archivos
+    val context = LocalContext.current
+
     // Estados de los inputs
     var titulo by remember { mutableStateOf("") }
     var autor by remember { mutableStateOf("") }
@@ -92,10 +97,28 @@ fun RegistroLibroScreen(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Button(onClick = { /* falta */ }) {
+            // lgica del botón GUARDAR
+            Button(onClick = {
+                if (titulo.isNotBlank() && autor.isNotBlank() && paginas.isNotBlank()) {
+                    val datosAGuardar = "Título: $titulo\nAutor: $autor\nPáginas: $paginas"
+                    try {
+                        // Guardar en almacenamiento interno
+                        context.openFileOutput("registro_libro.txt", Context.MODE_PRIVATE).use { output ->
+                            output.write(datosAGuardar.toByteArray())
+                        }
+                        Toast.makeText(context, "¡Datos guardados con éxito!", Toast.LENGTH_SHORT).show()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        Toast.makeText(context, "Error al guardar el archivo", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(context, "Por favor complete todos los campos", Toast.LENGTH_SHORT).show()
+                }
+            }) {
                 Text("GUARDAR")
             }
-            OutlinedButton(onClick = { /* falta */ }) {
+
+            OutlinedButton(onClick = { /* falta implementar */ }) {
                 Text("VER REGISTRO")
             }
         }
