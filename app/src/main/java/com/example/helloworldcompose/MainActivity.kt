@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.helloworldcompose.ui.theme.HelloWorldComposeTheme
 
@@ -42,6 +43,9 @@ fun RegistroLibroScreen(modifier: Modifier = Modifier) {
     var titulo by remember { mutableStateOf("") }
     var autor by remember { mutableStateOf("") }
     var paginas by remember { mutableStateOf("") }
+
+    // Creacion de estado para guardar la lectura y mostrarla en pantalla
+    var contenidoGuardado by remember { mutableStateOf("") }
 
     Column(
         modifier = modifier
@@ -115,22 +119,51 @@ fun RegistroLibroScreen(modifier: Modifier = Modifier) {
                 Text("GUARDAR")
             }
 
-            // logica del botón VER REGISTRO (Lectura e impresión en Logcat)
+            // VER REGISTRO
             OutlinedButton(onClick = {
                 try {
                     // Leer el archivo desde el almacenamiento interno
                     val contenido = context.openFileInput("registro_libro.txt").bufferedReader().use { it.readText() }
 
-                    // Imprimir en consola
+                    // PUNTO 3: Imprimir en consola Logcat
                     Log.d("RegistroLibro", "Contenido recuperado del archivo:\n$contenido")
 
-                    Toast.makeText(context, "Registro enviado a la consola Logcat", Toast.LENGTH_SHORT).show()
+                    // PUNTO 4: Asignar al estado para renderizar en la pantalla
+                    contenidoGuardado = contenido
+
+                    Toast.makeText(context, "Registro recuperado con éxito", Toast.LENGTH_SHORT).show()
                 } catch (e: Exception) {
                     Log.e("RegistroLibro", "Error al leer el archivo guardado", e)
                     Toast.makeText(context, "No se encontró ningún archivo registrado", Toast.LENGTH_SHORT).show()
                 }
             }) {
                 Text("VER REGISTRO")
+            }
+        }
+
+        // para el reto opcional
+        if (contenidoGuardado.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Reto Opcional)",
+                style = MaterialTheme.typography.labelSmall,
+                modifier = Modifier.align(Alignment.Start)
+            )
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                )
+            ) {
+                Column(modifier = Modifier.padding(12.dp)) {
+                    Text(
+                        text = "REGISTRO GUARDADO",
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(text = contenidoGuardado)
+                }
             }
         }
     }
