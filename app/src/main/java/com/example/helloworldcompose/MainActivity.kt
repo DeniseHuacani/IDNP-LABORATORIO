@@ -2,6 +2,7 @@ package com.example.helloworldcompose
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -35,7 +36,6 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegistroLibroScreen(modifier: Modifier = Modifier) {
-    // Obtener contexto local para manejar archivos
     val context = LocalContext.current
 
     // Estados de los inputs
@@ -43,7 +43,6 @@ fun RegistroLibroScreen(modifier: Modifier = Modifier) {
     var autor by remember { mutableStateOf("") }
     var paginas by remember { mutableStateOf("") }
 
-    // Disposición vertical
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -84,7 +83,7 @@ fun RegistroLibroScreen(modifier: Modifier = Modifier) {
             }
         }
 
-        // Campo para Paginas leidas
+        // Campo para Páginas leídas
         OutlinedTextField(
             value = paginas,
             onValueChange = { paginas = it },
@@ -97,19 +96,17 @@ fun RegistroLibroScreen(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            // lgica del botón GUARDAR
+            // GUARDAR
             Button(onClick = {
                 if (titulo.isNotBlank() && autor.isNotBlank() && paginas.isNotBlank()) {
                     val datosAGuardar = "Título: $titulo\nAutor: $autor\nPáginas: $paginas"
                     try {
-                        // Guardar en almacenamiento interno
                         context.openFileOutput("registro_libro.txt", Context.MODE_PRIVATE).use { output ->
                             output.write(datosAGuardar.toByteArray())
                         }
                         Toast.makeText(context, "¡Datos guardados con éxito!", Toast.LENGTH_SHORT).show()
                     } catch (e: Exception) {
                         e.printStackTrace()
-                        Toast.makeText(context, "Error al guardar el archivo", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     Toast.makeText(context, "Por favor complete todos los campos", Toast.LENGTH_SHORT).show()
@@ -118,7 +115,21 @@ fun RegistroLibroScreen(modifier: Modifier = Modifier) {
                 Text("GUARDAR")
             }
 
-            OutlinedButton(onClick = { /* falta implementar */ }) {
+            // logica del botón VER REGISTRO (Lectura e impresión en Logcat)
+            OutlinedButton(onClick = {
+                try {
+                    // Leer el archivo desde el almacenamiento interno
+                    val contenido = context.openFileInput("registro_libro.txt").bufferedReader().use { it.readText() }
+
+                    // Imprimir en consola
+                    Log.d("RegistroLibro", "Contenido recuperado del archivo:\n$contenido")
+
+                    Toast.makeText(context, "Registro enviado a la consola Logcat", Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    Log.e("RegistroLibro", "Error al leer el archivo guardado", e)
+                    Toast.makeText(context, "No se encontró ningún archivo registrado", Toast.LENGTH_SHORT).show()
+                }
+            }) {
                 Text("VER REGISTRO")
             }
         }
