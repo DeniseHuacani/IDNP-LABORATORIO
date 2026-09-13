@@ -10,7 +10,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Book
+import androidx.compose.material.icons.filled.AutoStories
+import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Numbers
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.helloworldcompose.ui.theme.HelloWorldComposeTheme
 
 class MainActivity : ComponentActivity() {
@@ -44,44 +48,60 @@ fun RegistroLibroScreen(modifier: Modifier = Modifier) {
     var autor by remember { mutableStateOf("") }
     var paginas by remember { mutableStateOf("") }
 
-    // Creacion de estado para guardar la lectura y mostrarla en pantalla
+    // PUNTO 4: Estado para guardar la lectura y mostrarla en pantalla
     var contenidoGuardado by remember { mutableStateOf("") }
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Tarjeta superior
-        Card(
+        // Tarjeta superior estilizada
+        ElevatedCard(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
         ) {
             Column(
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(20.dp)
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Default.Book,
-                    contentDescription = "Libro",
-                    modifier = Modifier.size(48.dp)
+                    imageVector = Icons.Default.MenuBook,
+                    contentDescription = "Icono Libro",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(52.dp)
                 )
+
+                Text(
+                    text = "Registro de Lectura",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+
                 OutlinedTextField(
                     value = titulo,
                     onValueChange = { titulo = it },
                     label = { Text("Título del Libro") },
+                    leadingIcon = { Icon(Icons.Default.AutoStories, contentDescription = null) },
+                    singleLine = true,
+                    shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.fillMaxWidth()
                 )
+
                 OutlinedTextField(
                     value = autor,
                     onValueChange = { autor = it },
                     label = { Text("Autor") },
+                    leadingIcon = { Icon(Icons.Default.Person, contentDescription = null) },
+                    singleLine = true,
+                    shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.fillMaxWidth()
                 )
             }
@@ -92,77 +112,101 @@ fun RegistroLibroScreen(modifier: Modifier = Modifier) {
             value = paginas,
             onValueChange = { paginas = it },
             label = { Text("Páginas leídas") },
+            leadingIcon = { Icon(Icons.Default.Numbers, contentDescription = null) },
+            singleLine = true,
+            shape = RoundedCornerShape(12.dp),
             modifier = Modifier.fillMaxWidth()
         )
 
-        // Botones
+        // Botones estilizados
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // GUARDAR
-            Button(onClick = {
-                if (titulo.isNotBlank() && autor.isNotBlank() && paginas.isNotBlank()) {
-                    val datosAGuardar = "Título: $titulo\nAutor: $autor\nPáginas: $paginas"
-                    try {
-                        context.openFileOutput("registro_libro.txt", Context.MODE_PRIVATE).use { output ->
-                            output.write(datosAGuardar.toByteArray())
+            // Botón GUARDAR
+            Button(
+                onClick = {
+                    if (titulo.isNotBlank() && autor.isNotBlank() && paginas.isNotBlank()) {
+                        val datosAGuardar = "Título: $titulo\nAutor: $autor\nPáginas: $paginas"
+                        try {
+                            context.openFileOutput("registro_libro.txt", Context.MODE_PRIVATE).use { output ->
+                                output.write(datosAGuardar.toByteArray())
+                            }
+                            Toast.makeText(context, "¡Datos guardados con éxito!", Toast.LENGTH_SHORT).show()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
                         }
-                        Toast.makeText(context, "¡Datos guardados con éxito!", Toast.LENGTH_SHORT).show()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
+                    } else {
+                        Toast.makeText(context, "Por favor complete todos los campos", Toast.LENGTH_SHORT).show()
                     }
-                } else {
-                    Toast.makeText(context, "Por favor complete todos los campos", Toast.LENGTH_SHORT).show()
-                }
-            }) {
-                Text("GUARDAR")
+                },
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("GUARDAR", fontWeight = FontWeight.Bold)
             }
 
-            // VER REGISTRO
-            OutlinedButton(onClick = {
-                try {
-                    // Leer el archivo desde el almacenamiento interno
-                    val contenido = context.openFileInput("registro_libro.txt").bufferedReader().use { it.readText() }
+            // Botón VER REGISTRO
+            OutlinedButton(
+                onClick = {
+                    try {
+                        val contenido = context.openFileInput("registro_libro.txt").bufferedReader().use { it.readText() }
 
-                    // PUNTO 3: Imprimir en consola Logcat
-                    Log.d("RegistroLibro", "Contenido recuperado del archivo:\n$contenido")
+                        // PUNTO 3: Imprimir en consola Logcat
+                        Log.d("RegistroLibro", "Contenido recuperado del archivo:\n$contenido")
 
-                    // PUNTO 4: Asignar al estado para renderizar en la pantalla
-                    contenidoGuardado = contenido
+                        // PUNTO 4: Mostrar en pantalla
+                        contenidoGuardado = contenido
 
-                    Toast.makeText(context, "Registro recuperado con éxito", Toast.LENGTH_SHORT).show()
-                } catch (e: Exception) {
-                    Log.e("RegistroLibro", "Error al leer el archivo guardado", e)
-                    Toast.makeText(context, "No se encontró ningún archivo registrado", Toast.LENGTH_SHORT).show()
-                }
-            }) {
-                Text("VER REGISTRO")
+                        Toast.makeText(context, "Registro cargado correctamente", Toast.LENGTH_SHORT).show()
+                    } catch (e: Exception) {
+                        Log.e("RegistroLibro", "Error al leer el archivo guardado", e)
+                        Toast.makeText(context, "No se encontró ningún archivo guardado", Toast.LENGTH_SHORT).show()
+                    }
+                },
+                shape = RoundedCornerShape(12.dp),
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("VER REGISTRO", fontWeight = FontWeight.Bold)
             }
         }
 
-        // para el reto opcional
         if (contenidoGuardado.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "Reto Opcional)",
-                style = MaterialTheme.typography.labelSmall,
-                modifier = Modifier.align(Alignment.Start)
-            )
-            Card(
+            Column(
                 modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant
-                )
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                Column(modifier = Modifier.padding(12.dp)) {
-                    Text(
-                        text = "REGISTRO GUARDADO",
-                        fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.titleSmall
+                Text(
+                    text = "",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.outline,
+                    modifier = Modifier.padding(start = 4.dp)
+                )
+
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = contenidoGuardado)
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Text(
+                            text = "REGISTRO GUARDADO",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                        Text(
+                            text = contenidoGuardado,
+                            fontSize = 14.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
             }
         }
