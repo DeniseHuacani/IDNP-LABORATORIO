@@ -29,7 +29,7 @@ fun guardarCuenta(context: Context, usuario: String, password: String) {
         context.openFileOutput(ARCHIVO_CUENTAS, Context.MODE_APPEND).use { salida ->
             salida.write("$usuario,$password\n".toByteArray())
         }
-        Log.e("GUARDADO_TXT", ">>> SE GUARDO CORRECTAMENTE: $usuario,$password <<<")
+        Log.e("GUARDADO_TXT", ">>> SE GUARDÓ CORRECTAMENTE: $usuario,$password <<<")
     } catch (e: Exception) {
         Log.e("GUARDADO_TXT", "Error al guardar el archivo: ${e.message}")
     }
