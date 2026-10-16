@@ -1,0 +1,16 @@
+{
+  "ambientes": [
+    { "etiqueta": "Laboratorio 1",    "x": 10,  "y": 10,  "ancho": 170, "alto": 150, "color": "#BBDEFB" },
+    { "etiqueta": "Laboratorio 2",    "x": 180, "y": 10,  "ancho": 170, "alto": 150, "color": "#C8E6C9" },
+    { "etiqueta": "Aula 301",         "x": 10,  "y": 160, "ancho": 170, "alto": 120, "color": "#FFE0B2" },
+    { "etiqueta": "Sala de Docentes", "x": 180, "y": 160, "ancho": 170, "alto": 120, "color": "#E1BEE7" },
+    { "etiqueta": "Patio Principal-Sistemas(cambio)",    "x": 10,  "y": 280, "ancho": 340, "alto": 110, "color": "#FFF9C4" }
+  ],
+  "marcadores": [
+    { "titulo": "Laboratorio 1",    "descripcion": "Laboratorio de cómputo con 30 equipos",        "x": 95,  "y": 85,  "radio": 16 },
+    { "titulo": "Laboratorio 2",    "descripcion": "Laboratorio de redes y servidores",            "x": 265, "y": 85,  "radio": 16 },
+    { "titulo": "Aula 301",         "descripcion": "Aula teórica con capacidad para 40 alumnos",   "x": 95,  "y": 220, "radio": 16 },
+    { "titulo": "Sala de Docentes", "descripcion": "Oficinas y sala de reuniones de docentes",     "x": 265, "y": 220, "radio": 16 },
+    { "titulo": "Patio Principal-Sistemas(cambio)",    "descripcion": "Área abierta de descanso y actividades",       "x": 180, "y": 335, "radio": 16 }
+  ]
+}
